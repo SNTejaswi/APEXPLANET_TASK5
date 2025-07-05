@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SmartCart - eCommerce Website</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+    body { background: linear-gradient(135deg, #e3f2fd, #e0f7fa); color: #333; line-height: 1.6; }
+
+    .screen {
+      display: none;
+      height: 100vh;
+      width: 100%;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .active { display: flex; }
+
+    #welcomeScreen {
+      background: linear-gradient(135deg, #26a69a, #00796b);
+      color: white;
+    }
+
+    #welcomeScreen h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+    }
+
+    #welcomeScreen button {
+      padding: 12px 24px;
+      font-size: 1.2rem;
+      background: white;
+      color: #00796b;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    #welcomeScreen button:hover {
+      background: #e0f2f1;
+    }
+
+    #loginScreen {
+      background: #ffffff;
+    }
+
+    #loginScreen form {
+      background: #e0f2f1;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    #loginScreen h2 { margin-bottom: 20px; color: #00796b; }
+
+    #loginScreen input {
+      padding: 12px;
+      margin: 10px 0;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    #loginScreen button {
+      padding: 10px 20px;
+      background: #00796b;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    #loginScreen button:hover { background: #004d40; }
+
+    header { background-color: #00897b; padding: 30px 0; text-align: center; color: white; font-size: 2rem; font-weight: bold; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); }
+    nav { background: #004d40; display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 20px; padding: 12px; }
+    nav a, nav select {
+      color: white; background: #00796b; border: none; padding: 10px 16px;
+      font-weight: 500; border-radius: 6px; cursor: pointer; transition: 0.3s;
+    }
+    nav a:hover, nav select:hover { background-color: #005a4f; transform: scale(1.05); }
+    nav select { font-size: 1rem; color: white; appearance: none; }
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+      padding: 40px 50px;
+    }
+
+    .product {
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      text-align: center;
+    }
+
+    .product:hover { transform: translateY(-5px); box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15); }
+
+    .product img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-bottom: 1px solid #eee;
+    }
+
+    .product h3 { font-size: 1.2rem; margin: 15px 0 8px; }
+    .product p { font-size: 0.95rem; padding: 0 15px; color: #666; }
+    .product strong { display: inline-block; margin: 10px 0; font-size: 1.1rem; color: #009688; }
+
+    .product button {
+      background-color: #00796b;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin-bottom: 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .product button:hover { background-color: #004d40; transform: scale(1.05); }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      background: #004d40;
+      color: white;
+      margin-top: 40px;
+      font-size: 0.95rem;
+    }
+
+    #cartSection {
+      padding: 30px 50px;
+      background: #ffffff;
+      margin: 30px auto;
+      max-width: 800px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    #cartSection h2 { margin-bottom: 20px; color: #00796b; }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .cart-item:last-child { border-bottom: none; }
+    .cart-item span { font-size: 1rem; }
+    .empty-cart { text-align: center; color: #999; }
+
+    @media (max-width: 600px) {
+      nav { flex-direction: column; }
+      nav select { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  
+  <section id="welcomeScreen" class="screen active">
+    <h1>Welcome to SmartCart</h1>
+    <button onclick="goToLogin()">Get Started</button>
+  </section>
+
+  
+  <section id="loginScreen" class="screen">
+    <form onsubmit="return loginUser()">
+      <h2>Sign In</h2>
+      <input type="text" id="username" placeholder="Enter username" required /><br/>
+      <input type="password" id="password" placeholder="Enter password" required /><br/>
+      <button type="submit">Login</button>
+    </form>
+  </section>
+
+
+  <div id="appScreen" style="display: none;">
+    <header>SmartCart - eCommerce Website</header>
+    <nav>
+      <a href="#" onclick="toggleSection('products')">Home</a>
+      <a href="#" onclick="toggleSection('products')">Products</a>
+      <a href="#" onclick="toggleSection('cart')">Cart (<span id="cartCount">0</span>)</a>
+      <select id="categorySelect" onchange="filterByCategory(this.value)">
+        <option value="all">All Categories</option>
+        <option value="Electronics">Electronics</option>
+        <option value="Accessories">Accessories</option>
+        <option value="Fashion">Fashion</option>
+      </select>
+    </nav>
+
+    <main class="products" id="productList"></main>
+
+    <section id="cartSection" style="display: none;">
+      <h2>Your Cart</h2>
+      <div id="cartItems" class="cart-items"></div>
+      <div id="cartTotal" style="margin-top: 20px; font-size: 1.1rem; font-weight: bold; color: #00796b;"></div>
+    </section>
+
+    <footer>&copy; 2025 SmartCart. All rights reserved.</footer>
+  </div>
+
+  <script>
+    const products = [
+      { name: "Wireless Headphones", price: "₹1999", description: "Noise-canceling over-ear headphones with Bluetooth.", image: "https://tse3.mm.bing.net/th/id/OIP.EHQ9iaJ07zOLx-BllkdiYwHaEJ?pid=Api&P=0&h=180", category: "Electronics" },
+      { name: "Smart Watch", price: "₹2999", description: "Stylish smart watch with health tracking.", image: "https://tse4.mm.bing.net/th/id/OIP.pvaItcX7Fo3LuTY6hpdkvQHaEK?pid=Api&P=0&h=180", category: "Fashion" },
+      { name: "Gaming Mouse", price: "₹899", description: "Ergonomic RGB gaming mouse.", image: "https://tse1.mm.bing.net/th/id/OIP.CNedvNpIGhgza-8E5wdBqAAAAA?pid=Api&P=0&h=180", category: "Electronics" },
+      { name: "Laptop Stand", price: "₹599", description: "Aluminum adjustable laptop stand.", image: "https://tse2.mm.bing.net/th/id/OIP.NfEgdWeocRRM7y2AaPYWYwHaGd?pid=Api&P=0&h=180", category: "Accessories" },
+      { name: "Men's Casual Shirt", price: "₹1199", description: "Comfortable cotton shirt for daily wear.", image: "https://tse1.mm.bing.net/th/id/OIP.sdXZhwgOL_SPEWe_CXUjiQHaMp?pid=Api&P=0&h=180", category: "Fashion" },
+      { name: "Women's Handbag", price: "₹1499", description: "Elegant handbag with spacious compartments.", image: "https://tse1.mm.bing.net/th/id/OIP.ZD2FL5oQWWr0fxJajEq_JQHaGJ?pid=Api&P=0&h=180", category: "Fashion" },
+      { name: "Bluetooth Speaker", price: "₹1299", description: "Compact wireless speaker with powerful sound.", image: "https://tse2.mm.bing.net/th/id/OIP.TPp7UhAmDyrtMaXAEeVGKwHaHa?pid=Api&P=0&h=180", category: "Electronics" },
+      { name: "Phone Tripod", price: "₹499", description: "Flexible tripod stand for smartphone photography.", image: "https://tse1.mm.bing.net/th/id/OIP.NXt2eN2PtFUH9hnWgsy42gAAAA?pid=Api&P=0&h=180", category: "Accessories" },
+      { name: "Running Shoes", price: "₹2199", description: "Lightweight and breathable shoes for everyday wear.", image: "https://tse4.mm.bing.net/th/id/OIP.TT5G3ICTyt3L8nKfQG_wKQHaEK?pid=Api&P=0&h=180", category: "Fashion" },
+      { name: "Sunglasses", price: "₹899", description: "UV-protection stylish sunglasses.", image: "https://tse1.mm.bing.net/th/id/OIP.msIjpVHw-1WRUcZoTGl4AAHaEK?pid=Api&P=0&h=180", category: "Accessories" },
+      { name: "USB-C Hub", price: "₹1099", description: "Multi-port USB hub for laptops and tablets.", image: "https://tse2.mm.bing.net/th/id/OIP.w2Bptt-o7V5mOlBVm9gO5gHaF7?pid=Api&P=0&h=180", category: "Electronics" },
+      { name: "Backpack", price: "₹1699", description: "Waterproof backpack with laptop compartment.", image: "https://tse2.mm.bing.net/th/id/OIP.fsZ0w15ffKONqHW3ikJ0uAHaEJ?pid=Api&P=0&h=180", category: "Accessories" }
+    ];
+
+    let cart = [];
+
+    function goToLogin() {
+      document.getElementById("welcomeScreen").classList.remove("active");
+      document.getElementById("loginScreen").classList.add("active");
+    }
+
+    function loginUser() {
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+      if (!username || !password) {
+        alert("Please enter both fields");
+        return false;
+      }
+      document.getElementById("loginScreen").classList.remove("active");
+      document.getElementById("appScreen").style.display = "block";
+      renderProducts();
+      return false;
+    }
+
+    function renderProducts(filteredProducts = products) {
+      const productList = document.getElementById("productList");
+      productList.innerHTML = '';
+      filteredProducts.forEach(product => {
+        const productCard = document.createElement("div");
+        productCard.className = "product";
+        productCard.innerHTML = `
+          <img src="${product.image}" alt="${product.name}">
+          <h3>${product.name}</h3>
+          <p>${product.description}</p>
+          <strong>${product.price}</strong><br>
+          <button onclick="addToCart('${product.name}', '${product.price}')">Add to Cart</button>
+        `;
+        productList.appendChild(productCard);
+      });
+    }
+
+    function addToCart(name, price) {
+      cart.push({ name, price });
+      updateCart();
+      alert(`${name} added to cart!`);
+    }
+
+    function updateCart() {
+      const cartItems = document.getElementById("cartItems");
+      const cartCount = document.getElementById("cartCount");
+      const cartTotal = document.getElementById("cartTotal");
+
+      cartItems.innerHTML = '';
+      cartCount.textContent = cart.length;
+
+      if (cart.length === 0) {
+        cartItems.innerHTML = '<p class="empty-cart">Your cart is empty.</p>';
+        cartTotal.textContent = '';
+        return;
+      }
+
+      let total = 0;
+
+      cart.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.innerHTML = `
+          <span>${item.name} - ${item.price}</span>
+          <button onclick="removeItem(${index})">Remove</button>
+        `;
+        cartItems.appendChild(div);
+        total += parseFloat(item.price.replace(/[₹,]/g, ''));
+      });
+
+      cartTotal.textContent = `Total: ₹${total.toLocaleString("en-IN")}`;
+    }
+
+    function removeItem(index) {
+      cart.splice(index, 1);
+      updateCart();
+    }
+
+    function toggleSection(section) {
+      const cartSection = document.getElementById("cartSection");
+      const productSection = document.getElementById("productList");
+
+      if (section === 'cart') {
+        cartSection.style.display = 'block';
+        productSection.style.display = 'none';
+      } else {
+        cartSection.style.display = 'none';
+        productSection.style.display = 'grid';
+      }
+    }
+
+    function filterByCategory(category) {
+      if (category === 'all') {
+        renderProducts(products);
+      } else {
+        const filtered = products.filter(p => p.category === category);
+        renderProducts(filtered);
+      }
+    }
+  </script>
+</body>
+</html>
